@@ -1,4 +1,6 @@
+import GameScreen from "./components/GameScreen";
+
 const App = () => {
-  return <div>Snake</div>;
+  return <GameScreen />;
 };
 export default App;
