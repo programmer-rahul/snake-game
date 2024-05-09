@@ -16,7 +16,12 @@ const GameBoard = () => {
 
   let snakeSize = 40;
 
-  let snake = [{ x: 0, y: 0 }];
+  let snake = [
+    { x: 0, y: 0 },
+    { x: snakeSize * 1, y: snakeSize * 1 },
+    { x: snakeSize * 2, y: snakeSize * 1 },
+    { x: snakeSize * 3, y: snakeSize * 1 },
+  ];
   let food = {
     x: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
     y: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
@@ -24,7 +29,7 @@ const GameBoard = () => {
 
   let temp = 0;
   const animate = () => {
-    if (!ctx) return;
+    if (!ctx || !gameStatus) return;
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -47,10 +52,11 @@ const GameBoard = () => {
       if (snakeDirection === "down") snakeHead.y += snakeSize;
       console.log("snakeDirection", snakeDirection);
 
-      checkFoodCollison();
-
       snake.unshift(snakeHead);
       snake.pop();
+
+      checkFoodCollison();
+      checkSnakeCollison();
     }
 
     temp += 4;
@@ -74,6 +80,27 @@ const GameBoard = () => {
   const growSnake = () => {
     const snakeTail = { ...snake[snake.length - 1] };
     snake.push(snakeTail);
+  };
+
+  const checkSnakeCollison = () => {
+    const snakeHead = { ...snake[0] };
+
+    if (
+      snakeHead.x === CANVAS_WIDTH ||
+      snakeHead.x < 0 ||
+      snakeHead.y === CANVAS_HEIGHT ||
+      snakeHead.y < 0
+    )
+      return gameOver();
+    snake.forEach((segment, index) => {
+      if (segment.x === snakeHead.x && segment.y === snakeHead.y && index) {
+        gameOver();
+      }
+    });
+  };
+
+  const gameOver = () => {
+    gameStatus = false;
   };
 
   useEffect(() => {
