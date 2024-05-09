@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import GameBoard from "../components/GameBoard";
+import GameResult from "./GameResult";
 
 const GameScreen = () => {
   return (
-    <div className="gamescreen">
+    <div className="gamescreen relative">
       <div className="w-full h-screen bg-neutral-800 flex justify-center p-8 relative">
         <Link
           to="/"
@@ -15,6 +16,7 @@ const GameScreen = () => {
           <GameBoard />
         </div>
       </div>
+      <GameResult />
     </div>
   );
 };
