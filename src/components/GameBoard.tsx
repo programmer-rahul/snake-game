@@ -12,7 +12,7 @@ const GameBoard = () => {
   const CANVAS_WIDTH = 800;
   const CANVAS_HEIGHT = 800;
 
-  let gameStatus = true;
+  let gameStatus = false;
 
   let snakeSize = 40;
 
