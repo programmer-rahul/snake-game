@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Button from "./reusable/Button";
 
 const GameResult = () => {
@@ -10,9 +11,11 @@ const GameResult = () => {
           <p className="text-3xl">0</p>
         </div>
 
-        <div className="flex gap-2">
-          <Button type="primary" text="go back"></Button>
-          <Button type="secondary" text="play again"></Button>
+        <div className="flex gap-20">
+          <Link to="/" className="w-full">
+            <Button type="primary" text="go back" />
+          </Link>
+          <Button type="secondary" text="play again" />
         </div>
       </div>
     </div>
