@@ -31,7 +31,13 @@ const GameScreen = () => {
           to="/"
           className="absolute left-20 top-0 border rounded-md rotate-90 bg-white cursor-pointer py-2"
         >
-          <img src="arrow.svg" width={40} />
+          <img
+            src="arrow.svg"
+            width={40}
+            onClick={() => {
+              setGameStatus("not started");
+            }}
+          />
         </Link>
         <div className="flex flex-col gap-4 w-[50rem] h-[50rem]">
           <GameBoard />

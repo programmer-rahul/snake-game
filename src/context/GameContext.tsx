@@ -5,27 +5,34 @@ export type GameStartedType = "not started" | "running" | "over";
 interface ContextInterface {
   gameStatus: GameStartedType;
   setGameStatus: React.Dispatch<GameStartedType>;
-  gameOver: boolean;
-  setGameOver: React.Dispatch<boolean>;
+  gameScore: number;
+  setGameScore: React.Dispatch<number>;
+  highScore: number;
+  setHighScore: React.Dispatch<number>;
 }
 
 const GameContext = createContext<ContextInterface>({
   gameStatus: "not started",
   setGameStatus: () => {},
-  gameOver: false,
-  setGameOver: () => {},
+  gameScore: 0,
+  setGameScore: () => {},
+  highScore: 0,
+  setHighScore: () => {},
 });
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [gameStatus, setGameStatus] = useState<GameStartedType>("not started");
-  const [gameOver, setGameOver] = useState(false);
+  const [gameScore, setGameScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
   return (
     <GameContext.Provider
       value={{
         gameStatus,
         setGameStatus,
-        gameOver,
-        setGameOver,
+        gameScore,
+        setGameScore,
+        highScore,
+        setHighScore,
       }}
     >
       {children}

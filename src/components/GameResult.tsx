@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import Button from "./reusable/Button";
+import { useGame } from "../context/GameContext";
 
 const GameResult = () => {
+  const { setGameStatus } = useGame();
+
+  const goBackHandler = () => {
+    setGameStatus("not started");
+  };
+
   return (
     <div className="gameresult absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
       <div className="w-[40rem] h-[40rem] bg-amber-200 p-8 flex-col flex justify-around">
@@ -13,7 +20,11 @@ const GameResult = () => {
 
         <div className="flex gap-20">
           <Link to="/" className="w-full">
-            <Button type="primary" text="go back" />
+            <Button
+              type="primary"
+              text="go back"
+              clickHandler={goBackHandler}
+            />
           </Link>
           <Button type="secondary" text="play again" />
         </div>

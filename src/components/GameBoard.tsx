@@ -9,9 +9,14 @@ const GameBoard = () => {
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
   const gameStatusRef = useRef<GameStartedType>("not started");
 
-  const { gameStatus, setGameStatus } = useGame();
-
-  let [gameScore, setGameScore] = useState(0);
+  let {
+    gameStatus,
+    setGameStatus,
+    gameScore,
+    setGameScore,
+    setHighScore,
+    highScore,
+  } = useGame();
 
   const CANVAS_WIDTH = 800;
   const CANVAS_HEIGHT = 800;
@@ -103,6 +108,8 @@ const GameBoard = () => {
   };
 
   const gameOver = () => {
+    if (gameScore > highScore) setHighScore(gameScore);
+
     setGameStatus("over");
   };
 
@@ -122,6 +129,8 @@ const GameBoard = () => {
   useEffect(() => {
     let ctx = canvasRef.current?.getContext("2d");
     ctx && setCtx(ctx);
+
+    if (gameScore) setGameScore(0);
 
     document.addEventListener("keydown", handleUserKeyPress);
     return () => {
@@ -154,7 +163,7 @@ const GameBoard = () => {
         </div>
         <div className="high-score">
           <p>High Score</p>
-          <span>{0}</span>
+          <span>{highScore}</span>
         </div>
       </div>
     </>
