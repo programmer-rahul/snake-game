@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { SnakeDirection } from "../interfaces/snake";
+import { GameStartedType, useGame } from "../context/GameContext";
 
 let snakeDirection: SnakeDirection = "right";
 
 const GameBoard = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
+  const gameStatusRef = useRef<GameStartedType>("not started");
+
+  const { gameStatus, setGameStatus } = useGame();
 
   let [gameScore, setGameScore] = useState(0);
 
   const CANVAS_WIDTH = 800;
   const CANVAS_HEIGHT = 800;
-
-  let gameStatus = false;
 
   let snakeSize = 40;
 
@@ -22,14 +24,16 @@ const GameBoard = () => {
     { x: snakeSize * 2, y: snakeSize * 1 },
     { x: snakeSize * 3, y: snakeSize * 1 },
   ];
+
   let food = {
     x: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
     y: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
   };
 
   let temp = 0;
+
   const animate = () => {
-    if (!ctx || !gameStatus) return;
+    if (!ctx || gameStatusRef.current !== "running") return;
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -50,7 +54,6 @@ const GameBoard = () => {
       if (snakeDirection === "right") snakeHead.x += snakeSize;
       if (snakeDirection === "up") snakeHead.y -= snakeSize;
       if (snakeDirection === "down") snakeHead.y += snakeSize;
-      console.log("snakeDirection", snakeDirection);
 
       snake.unshift(snakeHead);
       snake.pop();
@@ -61,6 +64,11 @@ const GameBoard = () => {
 
     temp += 4;
     requestAnimationFrame(animate);
+  };
+
+  const growSnake = () => {
+    const snakeTail = { ...snake[snake.length - 1] };
+    snake.push(snakeTail);
   };
 
   const checkFoodCollison = () => {
@@ -75,11 +83,6 @@ const GameBoard = () => {
 
       growSnake();
     }
-  };
-
-  const growSnake = () => {
-    const snakeTail = { ...snake[snake.length - 1] };
-    snake.push(snakeTail);
   };
 
   const checkSnakeCollison = () => {
@@ -100,15 +103,8 @@ const GameBoard = () => {
   };
 
   const gameOver = () => {
-    gameStatus = false;
+    setGameStatus("over");
   };
-
-  useEffect(() => {
-    let ctx = canvasRef.current?.getContext("2d");
-    ctx && setCtx(ctx);
-    animate();
-    // console.log(food);
-  }, [ctx]);
 
   const handleUserKeyPress = (event: KeyboardEvent) => {
     if (event.key === "ArrowLeft" && snakeDirection !== "right")
@@ -124,11 +120,22 @@ const GameBoard = () => {
   };
 
   useEffect(() => {
+    let ctx = canvasRef.current?.getContext("2d");
+    ctx && setCtx(ctx);
+
     document.addEventListener("keydown", handleUserKeyPress);
     return () => {
       document.removeEventListener("keydown", handleUserKeyPress);
     };
   }, []);
+
+  useEffect(() => {
+    console.log("render", gameStatus);
+    if (gameStatusRef.current) {
+      gameStatusRef.current = gameStatus;
+    }
+    gameStatus === "running" && animate();
+  }, [gameStatus]);
 
   return (
     <>
