@@ -112,6 +112,7 @@ const GameBoard = () => {
   };
 
   const gameOver = () => {
+    gameScore && setGameScore(0);
     if (gameScore > highScore) setHighScore(gameScore);
 
     setGameStatus("over");

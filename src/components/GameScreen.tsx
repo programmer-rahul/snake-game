@@ -10,14 +10,21 @@ const GameScreen = () => {
   let [timerCount, setTimerCount] = useState(3);
 
   useEffect(() => {
-    if (timerCount < 0) return;
+    // if (timerCount < 0) return;
+    console.log("gamestatus changed", gameStatus);
 
-    setTimeout(() => {
-      timerCount--;
-      setTimerCount(timerCount);
-      !timerCount && setGameStatus("running");
-    }, 1000);
-  }, [timerCount]);
+    if (gameStatus === "not started") {
+      console.log("gamestatus changed", timerCount);
+      setTimeout(() => {
+        timerCount--;
+        setTimerCount(timerCount);
+        !timerCount && setGameStatus("running");
+      }, 1000);
+    }
+    if (gameStatus !== "not started" && !timerCount) {
+      setTimerCount(3);
+    }
+  }, [timerCount, gameStatus]);
 
   return (
     <div className="gamescreen relative">
@@ -39,7 +46,9 @@ const GameScreen = () => {
         </div>
       </div>
 
-      {timerCount > 0 && <GameStartTimer timerTime={timerCount} />}
+      {timerCount > 0 && gameStatus !== "running" && (
+        <GameStartTimer timerTime={timerCount} />
+      )}
       {gameStatus === "over" && <GameResult />}
     </div>
   );

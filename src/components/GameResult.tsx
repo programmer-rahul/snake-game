@@ -3,9 +3,9 @@ import Button from "./reusable/Button";
 import { useGame } from "../context/GameContext";
 
 const GameResult = () => {
-  const { setGameStatus } = useGame();
+  const { setGameStatus, gameScore } = useGame();
 
-  const goBackHandler = () => {
+  const playAgainHandler = () => {
     setGameStatus("not started");
   };
 
@@ -15,18 +15,18 @@ const GameResult = () => {
         <h3 className="text-4xl font-semibold self-center">Game Over</h3>
         <div className="score py-8 self-center flex gap-2 items-center font-mono">
           <p className="text-3xl">Score :- </p>
-          <p className="text-3xl">0</p>
+          <p className="text-3xl">{gameScore}</p>
         </div>
 
         <div className="flex gap-20">
           <Link to="/" className="w-full">
-            <Button
-              type="primary"
-              text="go back"
-              clickHandler={goBackHandler}
-            />
+            <Button type="primary" text="go back" />
           </Link>
-          <Button type="secondary" text="play again" />
+          <Button
+            type="secondary"
+            text="play again"
+            clickHandler={playAgainHandler}
+          />
         </div>
       </div>
     </div>
