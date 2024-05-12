@@ -10,18 +10,13 @@ const GameScreen = () => {
   let [timerCount, setTimerCount] = useState(3);
 
   useEffect(() => {
-    if (timerCount <= 0) {
-      console.log("timerclosed");
-      setGameStatus("running");
-      return;
-    }
+    if (timerCount < 0) return;
 
-    const timeOut = setTimeout(() => {
-      timerCount -= 1;
+    setTimeout(() => {
+      timerCount--;
       setTimerCount(timerCount);
+      !timerCount && setGameStatus("running");
     }, 1000);
-
-    return () => clearTimeout(timeOut);
   }, [timerCount]);
 
   return (
@@ -39,14 +34,12 @@ const GameScreen = () => {
             }}
           />
         </Link>
-        <div className="flex flex-col gap-4 w-[50rem] h-[50rem]">
-          <GameBoard />
+        <div className={`flex-col gap-4 w-[50rem] h-[50rem] flex`}>
+          {gameStatus === "running" && <GameBoard />}
         </div>
       </div>
 
-      {gameStatus === "not started" && (
-        <GameStartTimer timerTime={timerCount} />
-      )}
+      {timerCount > 0 && <GameStartTimer timerTime={timerCount} />}
       {gameStatus === "over" && <GameResult />}
     </div>
   );

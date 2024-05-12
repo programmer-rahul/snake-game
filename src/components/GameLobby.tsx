@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import Button from "./reusable/Button";
+import { useEffect } from "react";
+import { useGame } from "../context/GameContext";
 
 const GameLobby = () => {
+  const { setGameStatus } = useGame();
+
+  useEffect(() => {
+    setGameStatus("not started");
+  }, []);
+
   return (
     <div className="gamelobby relative">
       <div className="w-full h-screen bg-neutral-800 flex justify-center p-8">

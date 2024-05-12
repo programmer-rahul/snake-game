@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { SnakeDirection } from "../interfaces/snake";
-import { GameStartedType, useGame } from "../context/GameContext";
+import { useGame } from "../context/GameContext";
 
 let snakeDirection: SnakeDirection = "right";
 
 const GameBoard = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isGameRunning = useRef(false);
+
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
-  const gameStatusRef = useRef<GameStartedType>("not started");
 
   let {
     gameStatus,
@@ -38,7 +39,9 @@ const GameBoard = () => {
   let temp = 0;
 
   const animate = () => {
-    if (!ctx || gameStatusRef.current !== "running") return;
+    console.log("inside animate func", snakeDirection);
+    if (!ctx || !isGameRunning.current) return;
+    console.log("animate");
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -98,8 +101,9 @@ const GameBoard = () => {
       snakeHead.x < 0 ||
       snakeHead.y === CANVAS_HEIGHT ||
       snakeHead.y < 0
-    )
+    ) {
       return gameOver();
+    }
     snake.forEach((segment, index) => {
       if (segment.x === snakeHead.x && segment.y === snakeHead.y && index) {
         gameOver();
@@ -111,6 +115,7 @@ const GameBoard = () => {
     if (gameScore > highScore) setHighScore(gameScore);
 
     setGameStatus("over");
+    isGameRunning.current = false;
   };
 
   const handleUserKeyPress = (event: KeyboardEvent) => {
@@ -129,8 +134,7 @@ const GameBoard = () => {
   useEffect(() => {
     let ctx = canvasRef.current?.getContext("2d");
     ctx && setCtx(ctx);
-
-    if (gameScore) setGameScore(0);
+    snakeDirection = "right";
 
     document.addEventListener("keydown", handleUserKeyPress);
     return () => {
@@ -139,12 +143,11 @@ const GameBoard = () => {
   }, []);
 
   useEffect(() => {
-    console.log("render", gameStatus);
-    if (gameStatusRef.current) {
-      gameStatusRef.current = gameStatus;
+    if (gameStatus === "running" && !isGameRunning.current && ctx) {
+      isGameRunning.current = true;
+      animate();
     }
-    gameStatus === "running" && animate();
-  }, [gameStatus]);
+  }, [gameStatus, ctx, isGameRunning]);
 
   return (
     <>
