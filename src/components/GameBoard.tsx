@@ -178,9 +178,47 @@ const GameBoard = () => {
     }
   }, [gameStatus, ctx, isGameRunning]);
 
+  // handle user touches
+  const touchStart = {
+    x: 0,
+    y: 0,
+  };
+  const touchEnd = {
+    x: 0,
+    y: 0,
+  };
+
+  const userTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (gameStatus !== "running") return;
+    touchStart.x = event.touches[0].clientX;
+    touchStart.y = event.touches[0].clientY;
+  };
+  const userTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (gameStatus !== "running") return;
+    touchEnd.x = event.touches[0].clientX;
+    touchEnd.y = event.touches[0].clientY;
+  };
+  const userTouchEnd = () => {
+    if (gameStatus !== "running") return;
+    if (
+      Math.abs(touchStart.x - touchEnd.x) > Math.abs(touchStart.y - touchEnd.y)
+    ) {
+      if (snakeDirection === "left" || snakeDirection === "right") return;
+      snakeDirection = touchStart.x > touchEnd.x ? "left" : "right";
+    } else {
+      if (snakeDirection === "up" || snakeDirection === "down") return;
+      snakeDirection = touchStart.y > touchEnd.y ? "up" : "down";
+    }
+  };
+
   return (
     <>
-      <div className={`gameboard xl:w-full xl:h-full mx-auto my-10 xl:m-0`}>
+      <div
+        className={`gameboard xl:w-full xl:h-full mx-auto my-10 xl:m-0`}
+        onTouchStart={userTouchStart}
+        onTouchMove={userTouchMove}
+        onTouchEnd={userTouchEnd}
+      >
         <canvas
           className="border-2 border-purple-600"
           width={CANVAS_WIDTH}
