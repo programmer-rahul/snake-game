@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SnakeDirection } from "../interfaces/snake";
 import { useGame } from "../context/GameContext";
+import { LocalStorage } from "../utils/helper";
 
 let snakeDirection: SnakeDirection = "right";
 
@@ -135,7 +136,10 @@ const GameBoard = () => {
   };
 
   const gameOver = () => {
-    if (gameScore > highScore) setHighScore(gameScore);
+    if (gameScore > highScore) {
+      setHighScore(gameScore);
+      LocalStorage.set("snakeHighScore", gameScore);
+    }
 
     setGameStatus("over");
     isGameRunning.current = false;
@@ -172,6 +176,7 @@ const GameBoard = () => {
 
   useEffect(() => {
     if (gameStatus === "running" && !isGameRunning.current && ctx) {
+      setGameScore(0);
       snakeDirection = "right";
       isGameRunning.current = true;
       animate();

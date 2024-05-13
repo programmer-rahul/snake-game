@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
+import { LocalStorage } from "../utils/helper";
 
 export type GameStartedType = "not started" | "running" | "over";
 
@@ -23,7 +24,10 @@ const GameContext = createContext<ContextInterface>({
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [gameStatus, setGameStatus] = useState<GameStartedType>("not started");
   const [gameScore, setGameScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    let high = LocalStorage.get("snakeHighScore");
+    return high ? high : 0;
+  });
   return (
     <GameContext.Provider
       value={{
