@@ -27,19 +27,20 @@ const GameScreen = () => {
 
   return (
     <div className="gamescreen relative">
-      <div className="w-full h-screen bg-neutral-800 flex justify-center p-8 relative">
+      <div className="w-full h-screen bg-neutral-800 flex justify-center xl:p-8 relative">
         <Link
           to="/"
-          className="absolute left-20 top-0 border rounded-md rotate-90 bg-white cursor-pointer py-2"
+          className="absolute xl:left-20 xl:top-0 left-6 -top-3 border xl:rounded-md rounded-sm rotate-90 bg-white cursor-pointer py-2"
         >
           <img
             src="arrow.svg"
-            width={40}
+            className="xl:w-10 w-5"
             onClick={() => {
               setGameStatus("not started");
             }}
           />
         </Link>
+
         <div className={`flex-col gap-4 w-[50rem] h-[50rem] flex`}>
           {/* {gameStatus === "running" && <GameBoard />} */}
           <GameBoard />

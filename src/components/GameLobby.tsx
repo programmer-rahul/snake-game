@@ -12,9 +12,9 @@ const GameLobby = () => {
 
   return (
     <div className="gamelobby relative">
-      <div className="w-full h-screen bg-neutral-800 flex justify-center p-8">
-        <div className="flex flex-col gap-4 w-[34rem] h-[50rem] items-center justify-center bg-slate-200 rounded-xl ">
-          <h2 className="text-5xl text-purple-600 font-bold font-mono py-8">
+      <div className="w-full h-screen bg-neutral-800 flex justify-center items-center xl:p-8 p-2">
+        <div className="flex flex-col gap-4 xl:w-[34rem] xl:h-[50rem] h-[70%] p-4 items-center justify-center bg-slate-200 rounded-xl ">
+          <h2 className="xl:text-5xl text-4xl text-purple-600 font-bold font-mono py-8">
             Snake Game
           </h2>
           <div className="flex flex-col gap-4">

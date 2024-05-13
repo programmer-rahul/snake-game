@@ -19,10 +19,10 @@ const GameBoard = () => {
     highScore,
   } = useGame();
 
-  const CANVAS_WIDTH = 800;
-  const CANVAS_HEIGHT = 800;
+  const CANVAS_WIDTH = 360;
+  const CANVAS_HEIGHT = 360;
 
-  const cellSize = 40;
+  const cellSize = CANVAS_WIDTH / 20;
 
   let snakeSize = cellSize;
 
@@ -180,7 +180,7 @@ const GameBoard = () => {
 
   return (
     <>
-      <div className="gameboard w-full h-full">
+      <div className={`gameboard xl:w-full xl:h-full mx-auto my-10 xl:m-0`}>
         <canvas
           className="border-2 border-purple-600"
           width={CANVAS_WIDTH}
@@ -188,7 +188,7 @@ const GameBoard = () => {
           ref={canvasRef}
         ></canvas>
       </div>
-      <div className="flex justify-between text-white">
+      <div className="flex justify-between text-white px-8 xl:px-0">
         <div className="score">
           <p>Score</p>
           <span>{gameScore}</span>

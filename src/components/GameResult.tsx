@@ -11,22 +11,24 @@ const GameResult = () => {
 
   return (
     <div className="gameresult absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-      <div className="w-[40rem] h-[40rem] bg-amber-200 p-8 flex-col flex justify-around">
+      <div className="xl:w-[40rem] xl:h-[40rem] w-[20rem] h-full bg-amber-200 xl:p-8 py-10 px-8 rounded-md flex-col flex justify-around">
         <h3 className="text-4xl font-semibold self-center">Game Over</h3>
         <div className="score py-8 self-center flex gap-2 items-center font-mono">
-          <p className="text-3xl">Score :- </p>
-          <p className="text-3xl">{gameScore}</p>
+          <p className="xl:text-3xl text-2xl">Score :- </p>
+          <p className="xl:text-3xl text-2xl">{gameScore}</p>
         </div>
 
-        <div className="flex gap-20">
+        <div className="flex xl:gap-20 gap-2 flex-col xl:flex-row">
           <Link to="/" className="w-full">
             <Button type="primary" text="go back" />
           </Link>
-          <Button
-            type="secondary"
-            text="play again"
-            clickHandler={playAgainHandler}
-          />
+          <div className="w-full">
+            <Button
+              type="secondary"
+              text="play again"
+              clickHandler={playAgainHandler}
+            />
+          </div>
         </div>
       </div>
     </div>
