@@ -22,13 +22,15 @@ const GameBoard = () => {
   const CANVAS_WIDTH = 800;
   const CANVAS_HEIGHT = 800;
 
-  let snakeSize = 40;
+  const cellSize = 40;
+
+  let snakeSize = cellSize;
 
   let snake = [
     { x: 0, y: 0 },
-    { x: snakeSize * 1, y: snakeSize * 1 },
-    { x: snakeSize * 2, y: snakeSize * 1 },
-    { x: snakeSize * 3, y: snakeSize * 1 },
+    { x: snakeSize, y: snakeSize },
+    { x: snakeSize * 2, y: snakeSize },
+    { x: snakeSize * 3, y: snakeSize },
   ];
 
   let food = {
@@ -37,8 +39,6 @@ const GameBoard = () => {
   };
 
   let temp = 0;
-
-  const cellSize = 40;
 
   const drawGrid = () => {
     if (!ctx) return;
@@ -52,31 +52,39 @@ const GameBoard = () => {
   };
 
   const animate = () => {
-    console.log("inside animate func", snakeDirection);
     if (!ctx || !isGameRunning.current) return;
-    console.log("animate");
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     drawGrid();
 
-    // food
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, snakeSize, snakeSize);
 
-    // snake
-    snake.forEach((segment) => {
-      ctx.fillStyle = "orange";
+    snake.forEach((segment, index) => {
+      ctx.fillStyle = index === 0 ? "orange" : "green";
       ctx.fillRect(segment.x, segment.y, snakeSize, snakeSize);
     });
 
     if (temp % snakeSize === 0) {
       const snakeHead = { ...snake[0] };
 
-      if (snakeDirection === "left") snakeHead.x -= snakeSize;
-      if (snakeDirection === "right") snakeHead.x += snakeSize;
-      if (snakeDirection === "up") snakeHead.y -= snakeSize;
-      if (snakeDirection === "down") snakeHead.y += snakeSize;
+      switch (snakeDirection) {
+        case "left":
+          snakeHead.x -= snakeSize;
+          break;
+        case "right":
+          snakeHead.x += snakeSize;
+          break;
+        case "up":
+          snakeHead.y -= snakeSize;
+          break;
+        case "down":
+          snakeHead.y += snakeSize;
+          break;
+        default:
+          break;
+      }
 
       snake.unshift(snakeHead);
       snake.pop();
@@ -120,14 +128,13 @@ const GameBoard = () => {
       return gameOver();
     }
     snake.forEach((segment, index) => {
-      if (segment.x === snakeHead.x && segment.y === snakeHead.y && index) {
+      if (index && segment.x === snakeHead.x && segment.y === snakeHead.y) {
         gameOver();
       }
     });
   };
 
   const gameOver = () => {
-    gameScore && setGameScore(0);
     if (gameScore > highScore) setHighScore(gameScore);
 
     setGameStatus("over");
@@ -135,16 +142,22 @@ const GameBoard = () => {
   };
 
   const handleUserKeyPress = (event: KeyboardEvent) => {
-    if (event.key === "ArrowLeft" && snakeDirection !== "right")
-      snakeDirection = "left";
-    if (event.key === "ArrowRight" && snakeDirection !== "left")
-      snakeDirection = "right";
-    if (event.key === "ArrowUp" && snakeDirection !== "down")
-      snakeDirection = "up";
-    if (event.key === "ArrowDown" && snakeDirection !== "up")
-      snakeDirection = "down";
-    // console.log("key", event.key);
-    // console.log("snakeDirection", snakeDirection);
+    switch (event.key) {
+      case "ArrowLeft":
+        if (snakeDirection !== "right") snakeDirection = "left";
+        break;
+      case "ArrowRight":
+        if (snakeDirection !== "left") snakeDirection = "right";
+        break;
+      case "ArrowUp":
+        if (snakeDirection !== "down") snakeDirection = "up";
+        break;
+      case "ArrowDown":
+        if (snakeDirection !== "up") snakeDirection = "down";
+        break;
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
@@ -188,4 +201,5 @@ const GameBoard = () => {
     </>
   );
 };
+
 export default GameBoard;
