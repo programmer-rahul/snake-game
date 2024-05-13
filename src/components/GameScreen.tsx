@@ -10,7 +10,6 @@ const GameScreen = () => {
   let [timerCount, setTimerCount] = useState(3);
 
   useEffect(() => {
-    // if (timerCount < 0) return;
     console.log("gamestatus changed", gameStatus);
 
     if (gameStatus === "not started") {
@@ -42,7 +41,8 @@ const GameScreen = () => {
           />
         </Link>
         <div className={`flex-col gap-4 w-[50rem] h-[50rem] flex`}>
-          {gameStatus === "running" && <GameBoard />}
+          {/* {gameStatus === "running" && <GameBoard />} */}
+          <GameBoard />
         </div>
       </div>
 

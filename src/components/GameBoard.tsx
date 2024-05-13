@@ -38,12 +38,27 @@ const GameBoard = () => {
 
   let temp = 0;
 
+  const cellSize = 40;
+
+  const drawGrid = () => {
+    if (!ctx) return;
+
+    for (let i = 0; i < CANVAS_HEIGHT / cellSize; i++) {
+      for (let j = 0; j < CANVAS_WIDTH / cellSize; j++) {
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize);
+      }
+    }
+  };
+
   const animate = () => {
     console.log("inside animate func", snakeDirection);
     if (!ctx || !isGameRunning.current) return;
     console.log("animate");
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    drawGrid();
 
     // food
     ctx.fillStyle = "red";
@@ -135,7 +150,6 @@ const GameBoard = () => {
   useEffect(() => {
     let ctx = canvasRef.current?.getContext("2d");
     ctx && setCtx(ctx);
-    snakeDirection = "right";
 
     document.addEventListener("keydown", handleUserKeyPress);
     return () => {
@@ -145,6 +159,7 @@ const GameBoard = () => {
 
   useEffect(() => {
     if (gameStatus === "running" && !isGameRunning.current && ctx) {
+      snakeDirection = "right";
       isGameRunning.current = true;
       animate();
     }
