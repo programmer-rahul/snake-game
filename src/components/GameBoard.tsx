@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { SnakeDirection } from "../interfaces/snake";
 import { useGame } from "../context/GameContext";
 import { LocalStorage } from "../utils/helper";
+import { getBreakpoint, getCanvasWidth } from "../utils/screenSize";
 
 let snakeDirection: SnakeDirection = "right";
 
@@ -10,6 +11,21 @@ const GameBoard = () => {
   const isGameRunning = useRef(false);
 
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
+
+  const [canvasWidth, setCanvasWidth] = useState(() => {
+    return getCanvasWidth(getBreakpoint());
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCanvasWidth(getCanvasWidth(getBreakpoint()));
+    };
+    console.log("width :- ", canvasWidth);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   let {
     gameStatus,
@@ -20,8 +36,9 @@ const GameBoard = () => {
     highScore,
   } = useGame();
 
-  const CANVAS_WIDTH = 360;
-  const CANVAS_HEIGHT = 360;
+  const CANVAS_WIDTH = canvasWidth;
+  const CANVAS_HEIGHT = canvasWidth;
+  console.log("width", window.innerWidth);
 
   const cellSize = CANVAS_WIDTH / 20;
 
@@ -39,8 +56,6 @@ const GameBoard = () => {
     y: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
   };
 
-  let temp = 0;
-
   const drawGrid = () => {
     if (!ctx) return;
 
@@ -51,6 +66,9 @@ const GameBoard = () => {
       }
     }
   };
+
+  let temp = 0;
+  let speed = 0.1;
 
   const animate = () => {
     if (!ctx || !isGameRunning.current) return;
@@ -67,7 +85,7 @@ const GameBoard = () => {
       ctx.fillRect(segment.x, segment.y, snakeSize, snakeSize);
     });
 
-    if (temp % snakeSize === 0) {
+    if (temp % (40 * speed) === 0) {
       const snakeHead = { ...snake[0] };
 
       switch (snakeDirection) {
@@ -94,7 +112,7 @@ const GameBoard = () => {
       checkSnakeCollison();
     }
 
-    temp += 4;
+    temp += 1;
     requestAnimationFrame(animate);
   };
 
@@ -176,9 +194,9 @@ const GameBoard = () => {
 
   useEffect(() => {
     if (gameStatus === "running" && !isGameRunning.current && ctx) {
-      setGameScore(0);
       snakeDirection = "right";
       isGameRunning.current = true;
+      setGameScore(0);
       animate();
     }
   }, [gameStatus, ctx, isGameRunning]);
@@ -193,12 +211,12 @@ const GameBoard = () => {
     y: 0,
   };
 
-  const userTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+  const userTouchStart = (event: React.TouchEvent<HTMLCanvasElement>) => {
     if (gameStatus !== "running") return;
     touchStart.x = event.touches[0].clientX;
     touchStart.y = event.touches[0].clientY;
   };
-  const userTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+  const userTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
     if (gameStatus !== "running") return;
     touchEnd.x = event.touches[0].clientX;
     touchEnd.y = event.touches[0].clientY;
@@ -217,31 +235,17 @@ const GameBoard = () => {
   };
 
   return (
-    <>
-      <div
-        className={`gameboard xl:w-full xl:h-full mx-auto my-10 xl:m-0`}
-        onTouchStart={userTouchStart}
-        onTouchMove={userTouchMove}
-        onTouchEnd={userTouchEnd}
-      >
-        <canvas
-          className="border-2 border-purple-600"
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
-          ref={canvasRef}
-        ></canvas>
-      </div>
-      <div className="flex justify-between text-white px-8 xl:px-0">
-        <div className="score">
-          <p>Score</p>
-          <span>{gameScore}</span>
-        </div>
-        <div className="high-score">
-          <p>High Score</p>
-          <span>{highScore}</span>
-        </div>
-      </div>
-    </>
+    <canvas
+      onTouchStart={userTouchStart}
+      onTouchMove={userTouchMove}
+      onTouchEnd={userTouchEnd}
+      width={CANVAS_WIDTH}
+      height={CANVAS_HEIGHT}
+      className="h-full w-full border border-white"
+      ref={canvasRef}
+    >
+      yes
+    </canvas>
   );
 };
 
