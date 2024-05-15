@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { SnakeDirection } from "../interfaces/snake";
 import { useGame } from "../context/GameContext";
+import { SnakeDirection } from "../interfaces/snake";
 import { LocalStorage } from "../utils/helper";
-import { getBreakpoint, getCanvasWidth } from "../utils/screenSize";
 
 let snakeDirection: SnakeDirection = "right";
 
@@ -11,6 +10,7 @@ const GameBoard = () => {
   const isGameRunning = useRef(false);
 
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
+  const [canvasWidth, setCanvasWidth] = useState(300);
 
   let {
     gameStatus,
@@ -21,56 +21,44 @@ const GameBoard = () => {
     highScore,
   } = useGame();
 
-  const CANVAS_WIDTH = canvasWidth;
-  const CANVAS_HEIGHT = canvasWidth;
-  console.log("width", window.innerWidth);
+  const gridSize = 20;
+  const cellSize = canvasWidth / gridSize;
 
-  const cellSize = CANVAS_WIDTH / 20;
-
+  let snake = [{ x: 0, y: 0 }];
+  let food = { x: 0, y: 0 };
   let snakeSize = cellSize;
-
-  let snake = [
-    { x: 0, y: 0 },
-    { x: snakeSize, y: snakeSize },
-    { x: snakeSize * 2, y: snakeSize },
-    { x: snakeSize * 3, y: snakeSize },
-  ];
-
-  let food = {
-    x: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
-    y: Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize,
-  };
 
   const drawGrid = () => {
     if (!ctx) return;
 
-    for (let i = 0; i < CANVAS_HEIGHT / cellSize; i++) {
-      for (let j = 0; j < CANVAS_WIDTH / cellSize; j++) {
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
         ctx.strokeStyle = "red";
         ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize);
       }
     }
   };
 
-  let temp = 0;
-  let speed = 0.1;
+  let frame = 0;
+  let speed = 1;
 
   const animate = () => {
     if (!ctx || !isGameRunning.current) return;
 
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
+    ctx.clearRect(0, 0, canvasWidth, canvasWidth);
     drawGrid();
 
+    // to draw food
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, snakeSize, snakeSize);
 
+    // to draw snake head and tails
     snake.forEach((segment, index) => {
       ctx.fillStyle = index === 0 ? "orange" : "green";
       ctx.fillRect(segment.x, segment.y, snakeSize, snakeSize);
     });
 
-    if (temp % (40 * speed) === 0) {
+    if (frame % (12 - speed) === 0) {
       const snakeHead = { ...snake[0] };
 
       switch (snakeDirection) {
@@ -90,28 +78,24 @@ const GameBoard = () => {
           break;
       }
 
+      console.log("frame :- ", frame);
+      console.log("speed :- ", speed);
+
       snake.unshift(snakeHead);
       snake.pop();
 
-      checkFoodCollison();
       checkSnakeCollison();
+      checkFoodCollison();
     }
 
-    temp += 1;
+    frame += 1;
     requestAnimationFrame(animate);
-  };
-
-  const growSnake = () => {
-    const snakeTail = { ...snake[snake.length - 1] };
-    snake.push(snakeTail);
+    console.log("animate running", speed);
   };
 
   const checkFoodCollison = () => {
     if (snake[0].x === food.x && snake[0].y === food.y) {
-      food.x =
-        Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize;
-      food.y =
-        Math.floor(Math.random() * (CANVAS_WIDTH / snakeSize)) * snakeSize;
+      generateSnakeFood();
 
       gameScore += 5;
       setGameScore(gameScore);
@@ -120,17 +104,31 @@ const GameBoard = () => {
     }
   };
 
+  const generateSnakeFood = () => {
+    food.x = Math.floor(Math.random() * (canvasWidth / snakeSize)) * snakeSize;
+    food.y = Math.floor(Math.random() * (canvasWidth / snakeSize)) * snakeSize;
+
+    console.log("f", food);
+  };
+
+  const growSnake = () => {
+    const snakeTail = { ...snake[snake.length - 1] };
+    snake.push(snakeTail);
+    if (speed <= 6) speed += 1;
+  };
+
   const checkSnakeCollison = () => {
     const snakeHead = { ...snake[0] };
 
     if (
-      snakeHead.x === CANVAS_WIDTH ||
+      snakeHead.x === canvasWidth ||
       snakeHead.x < 0 ||
-      snakeHead.y === CANVAS_HEIGHT ||
+      snakeHead.y === canvasWidth ||
       snakeHead.y < 0
     ) {
       return gameOver();
     }
+
     snake.forEach((segment, index) => {
       if (index && segment.x === snakeHead.x && segment.y === snakeHead.y) {
         gameOver();
@@ -168,10 +166,27 @@ const GameBoard = () => {
   };
 
   useEffect(() => {
-    let ctx = canvasRef.current?.getContext("2d");
-    ctx && setCtx(ctx);
+    if (canvasRef) {
+      let ctx = canvasRef.current?.getContext("2d");
+      ctx && setCtx(ctx);
 
-    document.addEventListener("keydown", handleUserKeyPress);
+      if (canvasRef.current) {
+        let calculatedWidth;
+        if (window.innerWidth < window.innerHeight - 100) {
+          calculatedWidth = window.innerWidth - (window.innerWidth % 10) - 30;
+          canvasRef.current.width = calculatedWidth;
+          canvasRef.current.height = calculatedWidth;
+        } else {
+          calculatedWidth =
+            window.innerHeight - (window.innerHeight % 10) - 200;
+          canvasRef.current.width = calculatedWidth;
+          canvasRef.current.height = calculatedWidth;
+        }
+        setCanvasWidth(calculatedWidth);
+      }
+    }
+
+    window.addEventListener("keydown", handleUserKeyPress);
     return () => {
       document.removeEventListener("keydown", handleUserKeyPress);
     };
@@ -182,6 +197,10 @@ const GameBoard = () => {
       snakeDirection = "right";
       isGameRunning.current = true;
       setGameScore(0);
+
+      generateSnakeFood();
+      snake.push({ x: snakeSize * 2, y: 0 });
+      snake.push({ x: snakeSize * 3, y: 0 });
       animate();
     }
   }, [gameStatus, ctx, isGameRunning]);
@@ -220,18 +239,17 @@ const GameBoard = () => {
   };
 
   return (
-    <canvas
-      onTouchStart={userTouchStart}
-      onTouchMove={userTouchMove}
-      onTouchEnd={userTouchEnd}
-      width={CANVAS_WIDTH}
-      height={CANVAS_HEIGHT}
-      className="border border-white"
-      ref={canvasRef}
-    >
-      yes
-    </canvas>
+    <div className="flex h-full w-full justify-center">
+      <canvas
+        onTouchStart={userTouchStart}
+        onTouchMove={userTouchMove}
+        onTouchEnd={userTouchEnd}
+        ref={canvasRef}
+        className="h-full w-auto self-center border-2 border-red-500"
+        width={cellSize * gridSize}
+        height={cellSize * gridSize}
+      ></canvas>
+    </div>
   );
 };
-
 export default GameBoard;

@@ -2,7 +2,7 @@ import GameResult from "./GameResult";
 import { useEffect, useState } from "react";
 import GameStartTimer from "./GameStartTimer";
 import { useGame } from "../context/GameContext";
-import GameBoard1 from "./GameBoard1";
+import GameBoard from "./GameBoard";
 import GameScores from "./GameScores";
 
 const GamePlayScreen = () => {
@@ -32,7 +32,7 @@ const GamePlayScreen = () => {
     <div className="gameplayscreen">
       <div className="max-h-dvh min-h-dvh w-full bg-gray-900 ">
         <div className="container flex flex-col items-center gap-4 border p-2">
-          <GameBoard1 />
+          <GameBoard />
           <GameScores />
         </div>
 
