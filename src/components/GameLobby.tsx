@@ -1,31 +1,35 @@
 import { Link } from "react-router-dom";
 import Button from "./reusable/Button";
 import { useEffect } from "react";
-import { useGame } from "../context/GameContext";
+// import { useGame } from "../context/GameContext";
 
 const GameLobby = () => {
-  const { setGameStatus } = useGame();
+  // const { setGameStatus } = useGame();
 
   useEffect(() => {
-    setGameStatus("not started");
+    // setGameStatus("not started");
   }, []);
 
   return (
-    <div className="gamelobby relative">
-      <div className="flex max-h-svh min-h-svh w-full items-center justify-center border border-red-500 bg-neutral-800 p-2 xl:p-8">
-        <div className="flex h-3/5 flex-col items-center justify-center gap-4 rounded-xl border bg-slate-200 p-4 xl:h-[50rem] xl:w-[34rem]">
-          <h2 className="py-8 font-mono text-4xl font-bold xl:text-5xl">
-            Snake Game
-          </h2>
-          <div className="flex flex-col gap-4">
-            <Link to="/play">
-              <Button type="primary" text="offline" />
-            </Link>
-            <Button type="secondary" text="multiplayer" />
+    <main className="gamelobby">
+      <div className="flex max-h-dvh min-h-dvh w-full items-center justify-center overflow-hidden bg-gray-900">
+        {/* container */}
+        <div className="max-h-4/5 min-h-4/5 container flex w-4/5 flex-col gap-8 rounded-lg bg-indigo-300 px-8 py-16">
+          <h2 className="text-center text-5xl">Xyz Xyz</h2>
+
+          <div className="flex flex-col gap-2">
+            <div>
+              <Link to="/play">
+                <Button text="offline" type="primary" />
+              </Link>
+            </div>
+            <div>
+              <Button text="multiplayer" type="secondary" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 export default GameLobby;

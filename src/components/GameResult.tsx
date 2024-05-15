@@ -11,14 +11,14 @@ const GameResult = () => {
 
   return (
     <div className="gameresult absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-      <div className="xl:w-[40rem] xl:h-[40rem] w-[20rem] h-full bg-amber-200 xl:p-8 py-10 px-8 rounded-md flex-col flex justify-around">
-        <h3 className="text-4xl font-semibold self-center">Game Over</h3>
-        <div className="score py-8 self-center flex gap-2 items-center font-mono">
-          <p className="xl:text-3xl text-2xl">Score :- </p>
-          <p className="xl:text-3xl text-2xl">{gameScore}</p>
+      <div className="flex h-full w-[20rem] flex-col justify-around rounded-md bg-amber-200 px-8 py-10 xl:h-[40rem] xl:w-[40rem] xl:p-8">
+        <h3 className="self-center text-4xl font-semibold">Game Over</h3>
+        <div className="score flex items-center gap-2 self-center py-8 font-mono">
+          <p className="text-2xl xl:text-3xl">Score :- </p>
+          <p className="text-2xl xl:text-3xl">{gameScore}</p>
         </div>
 
-        <div className="flex xl:gap-20 gap-2 flex-col xl:flex-row">
+        <div className="flex flex-col gap-2 xl:flex-row xl:gap-20">
           <Link to="/" className="w-full">
             <Button type="primary" text="go back" />
           </Link>
