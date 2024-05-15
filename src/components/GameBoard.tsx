@@ -216,16 +216,21 @@ const GameBoard = () => {
   };
 
   const userTouchStart = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
     if (gameStatus !== "running") return;
     touchStart.x = event.touches[0].clientX;
     touchStart.y = event.touches[0].clientY;
   };
   const userTouchMove = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
+
     if (gameStatus !== "running") return;
     touchEnd.x = event.touches[0].clientX;
     touchEnd.y = event.touches[0].clientY;
   };
-  const userTouchEnd = () => {
+  const userTouchEnd = (event: React.TouchEvent<HTMLCanvasElement>) => {
+    event.preventDefault();
+
     if (gameStatus !== "running") return;
     if (
       Math.abs(touchStart.x - touchEnd.x) > Math.abs(touchStart.y - touchEnd.y)
@@ -245,7 +250,7 @@ const GameBoard = () => {
         onTouchMove={userTouchMove}
         onTouchEnd={userTouchEnd}
         ref={canvasRef}
-        className="h-full w-auto self-center border-2 border-red-500"
+        className="h-full w-auto self-center border-2 border-blue-500"
         width={cellSize * gridSize}
         height={cellSize * gridSize}
       ></canvas>
